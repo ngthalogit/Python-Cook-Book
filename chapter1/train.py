@@ -41,7 +41,7 @@ device = torch.device('cuda:0')
 model.to(device)
 
 # define loss function and optimizer
-loss_func = torch.nn.NLLLoss(reduction='sum', required_grad=True)
+loss_func = torch.nn.NLLLoss(reduction='sum')
 opt = torch.optim.Adam(model.parameters(), lr=1e-4)
 opt.zero_grad()
 

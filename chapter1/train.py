@@ -46,6 +46,17 @@ opt = torch.optim.Adam(model.parameters(), lr=1e-4)
 opt.zero_grad()
 
 # training
+def loss_batch(loss_func, x_batch, y_batch, y_hat, optimizer):
+    loss = loss_func(y_hat, y_batch)
+    pred = y_hat.argmax(dim=1, keepdim=True)
+    corrects = pred.eq(y_batch.view_as(pred)).sum().item()
+    if optimizer is not None: 
+        loss.backward()
+        optimizer.step()
+        optimizer.zero_grad()
+
+    return loss.item(), corrects
+    
 for epoch in range(5):
     # training epoch 
     model.train()
@@ -87,16 +98,7 @@ for epoch in range(5):
 model_save_path = '/content/weight.pt'
 torch.save(model.state_dict(), model_save_path)
 
-def loss_batch(loss_func, x_batch, y_batch, y_hat, optimizer):
-    loss = loss_func(y_hat, y_batch)
-    pred = y_hat.argmax(dim=1, keepdim=True)
-    corrects = pred.eq(y_batch.view_as(pred)).sum().item()
-    if optimizer is not None: 
-        loss.backward()
-        optimizer.step()
-        optimizer.zero_grad()
 
-    return loss.item(), corrects
 
 
 

@@ -46,7 +46,7 @@ opt = torch.optim.Adam(model.parameters(), lr=1e-4)
 opt.zero_grad()
 
 # training
-def loss_batch(loss_func, x_batch, y_batch, y_hat, optimizer):
+def loss_batch(loss_func, x_batch, y_batch, y_hat, optimizer=None):
     loss = loss_func(y_hat, y_batch)
     pred = y_hat.argmax(dim=1, keepdim=True)
     corrects = pred.eq(y_batch.view_as(pred)).sum().item()
@@ -56,7 +56,7 @@ def loss_batch(loss_func, x_batch, y_batch, y_hat, optimizer):
         optimizer.zero_grad()
 
     return loss.item(), corrects
-    
+
 for epoch in range(5):
     # training epoch 
     model.train()
@@ -81,7 +81,7 @@ for epoch in range(5):
         len_val_dl = len(val_dl.dataset)
         for x_batch, y_batch in val_dl:
             x_batch = x_batch.type(torch.float).to(device)
-            y_batch = y_batch.type(device)
+            y_batch = y_batch.to(device)
             
             y_hat = model(x_batch)
             loss_b, metric_b = loss_batch(loss_func, x_batch, y_batch, y_hat, opt)

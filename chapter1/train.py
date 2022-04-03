@@ -51,6 +51,7 @@ def loss_batch(loss_func, x_batch, y_batch, y_hat, optimizer=None):
     pred = y_hat.argmax(dim=1, keepdim=True)
     corrects = pred.eq(y_batch.view_as(pred)).sum().item()
     if optimizer is not None: 
+        loss.requires_grad_(True)
         loss.backward()
         optimizer.step()
         optimizer.zero_grad()

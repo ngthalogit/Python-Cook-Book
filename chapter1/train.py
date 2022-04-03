@@ -1,8 +1,8 @@
 from torchvision import datasets, transforms
 from torch.utils.data import TensorDataset, DataLoader
-from train import Net
+from model import Net
 import torch 
-
+import os
 
 # save on google colab
 data_save_path = '/content' 
@@ -14,17 +14,18 @@ data_transform = transforms.Compose([
     transforms.ToTensor()
 ])
 
+downloaded = True if os.path.exists(data_save_path) else False
 # loading  training and validation data  
-train_data = dataset.MNST(path=data_save_path, train=True, download=True, transform=data_transform)
-val_data = dataset.MNST(path=data_save_path, train=False, download=True)
+train_data = datasets.MNIST(data_save_path, train=True, download=downloaded, transform=data_transform)
+val_data = datasets.MNIST(data_save_path, train=False, download=downloaded)
 
 # extract data and targets 
 x_train, y_train = train_data.data, train_data.targets # [60000, 28, 28], [60000]
 x_val, y_val = val_data.data, val_data.targets # [10000, 28, 28], [10000]
 
 # convert B * H * W to B * C * H * W
-x_train = x_train.squeeze(1) # [60000, 1, 28, 28]
-x_val = x_val.squeeze(1) # [10000, 1, 28, 28]
+x_train = x_train.unsqueeze(1) # [60000, 1, 28, 28]
+x_val = x_val.unsqueeze(1) # [10000, 1, 28, 28]
 
 # wrapping tensors into dataset 
 train_ds = TensorDataset(x_train, y_train) 
@@ -40,8 +41,9 @@ device = torch.device('cuda:0')
 model.to(device)
 
 # define loss function and optimizer
-loss_func = torch.nn.NLLLoss(reduction='sum')
+loss_func = torch.nn.NLLLoss(reduction='sum', required_grad=True)
 opt = torch.optim.Adam(model.parameters(), lr=1e-4)
+opt.zero_grad()
 
 # training
 for epoch in range(5):

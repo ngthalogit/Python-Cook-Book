@@ -1,4 +1,4 @@
-from torchvision import dataset, transforms
+from torchvision import datasets, transforms
 from torch.utils.data import TensorDataset, DataLoader
 from train import Net
 import torch 

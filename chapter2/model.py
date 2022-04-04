@@ -13,8 +13,8 @@ def outputShapeConv2d(h, w, filter, pooling=2):
     padding = filter.padding
     dilation = filter.dilation
 
-    h = np.floor((h + 2 * padding[0] - dilation[0] * (kernel[0] -1) - 1)/stride[0] + 1)
-    w = np.floor((w + 2 * padding[1] - dilation[1] * (kernel[1] -1) - 1)/stride[1] + 1)
+    h = np.floor((h + 2 * padding[0] - dilation[0] * (kernel_size[0] -1) - 1)/stride[0] + 1)
+    w = np.floor((w + 2 * padding[1] - dilation[1] * (kernel_size[1] -1) - 1)/stride[1] + 1)
 
     if pooling:
         h /= pooling

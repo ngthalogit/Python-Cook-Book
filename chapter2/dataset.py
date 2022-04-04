@@ -24,10 +24,10 @@ class HistoCancerDataset():
 
         self.labels = [labels_df.loc[img_name[:-4]].values[0] for img_name in imgs_name]
 
-        self.trainsform = transform 
+        self.transform = transform 
 
     def __len__(self):
-        return len(imgs_name)
+        return len(self.imgs_path)
 
     def __getitem__(self, idx):
         img = Image.open(self.imgs_path[idx])

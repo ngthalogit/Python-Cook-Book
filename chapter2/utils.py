@@ -1,7 +1,7 @@
 
 # get learning rate
 def get_lr(opt):
-    for param_gr in opt.param_group:
+    for param_gr in opt.param_groups:
         return param_gr['lr']
 
 def loss_batch(loss_func, y_batch, y_hat, opt=None):

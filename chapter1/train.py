@@ -4,6 +4,7 @@ from model import Net
 import torch
 import os
 
+
 # save on google colab
 data_save_path = '/content'
 

@@ -5,6 +5,7 @@ from model import Net
 from torchsummary import summary
 import torch
 from torch.optim.lr_schduler import ReduceLROnPlateau
+from untils import loss_batch
 
 # convert PIL images to Tensor image 
 tensor_transform = transforms.Compose([transforms.ToTensor()])
@@ -67,9 +68,28 @@ opt.zero_grad()
 lr_schduler = ReduceLROnPlateau(opt, mode='min', factor=0.5, patience=20, verbose=1)
 
 # training   
-
+sanity = False
 for epoch in range(100):
     model.train()
+    loss_train, metric_train = 0.0, 0.0 
+    len_train_dl = len(train_dl.dataset)
+    for x_batch, y_batch in train_dl:
+        x_batch = x_batch.type(torch.float).to(device)
+        y_batch = y_batch.to(device)
+        y_hat = model(x_batch)
+        loss_b, metric_b = loss_batch(loss_func, y_hat, y_batch, opt)
+    
+        loss_train += loss_b
+        if metric_b is not None:
+            metric_train += metric_b
+    loss_train /= float(len_train_dl)
+    metric_train /= float(len_train_dl)
+    if sanity: break
     model.eval()
     with torch.no_grad():
-        pass
+        loss_val, metric_val = 0.0, 0.0  
+        len_val_dl = len(val_dl.datset)
+        for x_batch, y_batch in val_dl:
+            x_batch = x_batch.type(torch.float).to(device)
+            y_batch = y_batch.to(device)
+            y_hat = model()

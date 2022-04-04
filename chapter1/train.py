@@ -49,7 +49,8 @@ opt.zero_grad()
 
 # training
 
-def loss_batch(loss_func, x_batch, y_batch, y_hat, optimizer=None):
+
+def loss_batch(loss_func, y_batch, y_hat, optimizer=None):
     loss = loss_func(y_hat, y_batch)
     pred = y_hat.argmax(dim=1, keepdim=True)
     corrects = pred.eq(y_batch.view_as(pred)).sum().item()
@@ -59,6 +60,7 @@ def loss_batch(loss_func, x_batch, y_batch, y_hat, optimizer=None):
         optimizer.step()
         optimizer.zero_grad()
     return loss.item(), corrects
+
 
 for epoch in range(5):
     # training epoch
@@ -70,7 +72,8 @@ for epoch in range(5):
         x_batch = x_batch.type(torch.float).to(device)
         y_batch = y_batch.to(device)
         y_hat = model(x_batch)
-        loss_b, metric_b = loss_batch(loss_func, x_batch, y_batch, y_hat, opt)
+        loss_b, metric_b = loss_batch(
+            loss_func, y_batch, y_hat, opt)
         loss_train += loss_b
         if metric_b is not None:
             metric_train += metric_b
@@ -85,7 +88,7 @@ for epoch in range(5):
             y_batch = y_batch.to(device)
             y_hat = model(x_batch)
             loss_b, metric_b = loss_batch(
-                loss_func, x_batch, y_batch, y_hat, opt)
+                loss_func, y_batch, y_hat, opt)
             loss_val += loss_b
             if metric_b is not None:
                 metric_val += metric_b

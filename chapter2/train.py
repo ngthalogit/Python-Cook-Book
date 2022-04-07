@@ -92,7 +92,7 @@ for epoch in range(100):
         x_batch = x_batch.type(torch.float).to(device)
         y_batch = y_batch.to(device)
         y_hat = model(x_batch)
-        loss_b, metric_b = loss_batch(loss_func, y_hat, y_batch, opt)
+        loss_b, metric_b = loss_batch(loss_func, y_batch, y_hat, opt)
         loss_train += loss_b
         if metric_b is not None:
             metric_train += metric_b
@@ -105,12 +105,12 @@ for epoch in range(100):
     model.eval()
     with torch.no_grad():
         loss_val, metric_val = 0.0, 0.0
-        len_val_dl = len(val_dl.datset)
+        len_val_dl = len(val_dl.dataset)
         for x_batch, y_batch in val_dl:
             x_batch = x_batch.type(torch.float).to(device)
             y_batch = y_batch.to(device)
             y_hat = model(x_batch)
-            loss_b, metric_b = loss_batch(loss_func, y_hat, y_batch, opt)
+            loss_b, metric_b = loss_batch(loss_func, y_batch, y_hat, opt)
             loss_train += loss_b 
             if metric_b is not None:
                 metric_train += metric_b
@@ -119,8 +119,8 @@ for epoch in range(100):
         loss_val /= float(len(val_dl.dataset))
         metric_val /= float(len(val_dl.dataset))
 
-    if val_loss < best_loss:
-        best_loss = val_loss
+    if loss_val < best_loss:
+        best_loss = loss_val
         best_model = copy.deepcopy(model.state_dict())
         torch.save(model.state_dict(), weights_save_path)
         print('copied best model')
@@ -129,5 +129,5 @@ for epoch in range(100):
     if curr_lr != get_lr(opt):
         print('loading best model')
         model.load_state_dict(best_model)
-    print('train_loss: %.6f, val_loss: %.6f, accuracy: %.2f' %(train_loss, val_loss, 100 * metric_val))
+    print('train_loss: %.6f, val_loss: %.6f, accuracy: %.2f' %(loss_val, loss_val, 100 * metric_val))
 
